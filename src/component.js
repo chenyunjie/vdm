@@ -1,11 +1,8 @@
 import { createElement } from './dom';
 import { diff, patch } from './diff';
+import { VComponentNode } from './vnode';
 
-class Component extends Object {
-
-  _vnode;
-
-  _root;
+class Component extends VComponentNode {
 
   constructor(props) {
     super();
@@ -17,31 +14,28 @@ class Component extends Object {
     this.props = JSON.parse(JSON.stringify(props));
   }
 
+  propsChanged(newProps, oldProps) {
+
+  }
+
+  shouldComponentUpdate() {
+    
+  }
+
   setData(data, complete) {
     
     this.data = Object.assign({}, this.data, data);
 
-    this.isdirty = true;
-
-    this.children.map(component => {
-      if (component.props) {
-        const componentPropsKeys = Object.keys(component.props);
-        const dataKeys = Object.keys(data);
-        // 需要比较
-        component.isdirty = dataKeys.some((dataKey) => componentPropsKeys.indexOf(dataKey) >= 0);
-      }
-    });
-
     if (this.render) {
       const newVNode = this.render();
       if (newVNode) {
-        newVNode.component = this;
+        newVNode.holder = this;
       }
-      const patches = diff(newVNode, this._vnode, this._vnode._parent);
+      const patches = diff(newVNode, this.renderVNode, this.parent);
 
       patch(patches);
 
-      this._vnode = newVNode;
+      this.renderVNode = newVNode;
     }
     if (complete) {
       complete.apply(this, []);
@@ -54,16 +48,29 @@ class Component extends Object {
 
   forceUpdate() {
     const newVNode = this.render();
-    newVNode.component = this;
-    const patches = diff(newVNode, null, this._vnode._parent);
+    newVNode.holder = this;
+    const patches = diff(newVNode, null, this.parent);
     patch(patches);
   }
 
   get children() {
-    if (this._vnode.children && this._vnode.children.length > 0) {
-      return this._vnode.children.filter(child => !!child.component).map(child => child.component);
+    if (this.renderVNode) {
+      return this.renderVNode.children;
     }
     return [];
+  }
+
+  get element() {
+    if (this.renderVNode) {
+      return this.renderVNode.element;
+    }
+    return null;
+  }
+
+  set element(newElement) {
+    if (this.renderVNode) {
+      this.renderVNode.element = newElement;
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import { h, VNode, VTextNode, renderVNode, text, Component, render } from './vdom';
+import { h, VTextNode, renderVNode, text, Component, render } from './vdom';
 
 class DisplayHello extends Component {
 
@@ -18,9 +18,9 @@ class DisplayHello extends Component {
       unrelated++;
       times++;
       this.setData({ unrelated, times });
-      if (unrelated > 10) {
-        clearInterval(this.interval);
-      }
+      // if (unrelated > 10) {
+      //   clearInterval(this.interval);
+      // }
     }, 1000);
   }
 
@@ -34,10 +34,29 @@ class DisplayHello extends Component {
   }
 }
 
+// 需要考虑两种情况
+// 1. 条件式组件加载
+// 2. 组件引用参数变更
+
+// 收集条件参数
+// if 条件
+// 三目运算符 a > b ? a : b
+function conditionRender(ctx, expression, component) {
+
+}
+
 class HelloBar extends Component {
 
   constructor(props) {
     super(props);
+  }
+
+  shouldComponentUpdate() {
+    return true;
+  }
+
+  propsChanged(newProps) {
+    console.log('props变更了：', newProps);
   }
 
   render() {
@@ -45,7 +64,9 @@ class HelloBar extends Component {
 
     const  name = times % 2 == 0 ? '南京' : '世界';
     console.log('重新渲染');
-    return h('span', {}, [text("你好," + name + "," + times + "秒")]);
+    return h('span', {
+                        'style': times % 2 == 0 ? 'color: #ff4f4f' : 'color: #4386f5'
+                    }, [text("你好," + name + "," + times + "秒")]);
   }
 }
 

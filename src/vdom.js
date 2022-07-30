@@ -1,4 +1,4 @@
-import { VNode, VTextNode } from './vnode';
+import { VNormalNode, VTextNode } from './vnode';
 import { createElement } from './dom';
 import { h, text } from './h';
 import { Component } from './component';
@@ -7,27 +7,40 @@ import { diff, patch } from './diff';
 function renderVNode(rootElement, vnode) {
   if (rootElement) {
     createElement(vnode);
-    rootElement.appendChild(vnode._el);
+    rootElement.appendChild(vnode.element);
   }
 }
 
+/**
+ * 初始化渲染
+ * 
+ * @param {*} rootElement 
+ * @param {*} component 
+ */
 function render(rootElement, component) {
-  component._root = rootElement;
-  const newVNode = component.render();
-  const rootNode = h(rootElement.tagName, {}, [component]);
-  rootNode._el = rootElement;
 
-  newVNode.component = component;
+  // 初始化根组件节点
+  const newVNode = component.render();
+  // 首次加载，初始化根节点
+  const rootNode = h(rootElement.tagName, {}, [component]);
+  rootNode.element = rootElement;
+
+  // 设置组件父节点
+  component.parent = rootNode;
+
+  // 设置节点所属组件
+  newVNode.holder = component;
   const patches = diff(newVNode, null, rootNode);
 
+  // 应用diff内容
   patch(patches);
 
-  component._vnode = newVNode;
+  component.renderVNode = newVNode;
 }
 
 
 export {
-  VNode,
+  VNormalNode,
   VTextNode,
   renderVNode,
   h,
