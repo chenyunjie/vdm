@@ -27,6 +27,9 @@ function h(tag, attr, children) {
           // 设置当前组件节点的父级节点
           child.parent = node;
         }
+
+        
+
       } else if (child instanceof VNormalNode || child instanceof VTextNode) {
         child.parent = node;
       }
@@ -38,6 +41,8 @@ function h(tag, attr, children) {
   }
   return node;
 }
+
+
 
 function text(content) {
   let node = new VTextNode(content);

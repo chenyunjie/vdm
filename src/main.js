@@ -21,6 +21,10 @@ class DisplayHello extends Component {
       // if (unrelated > 10) {
       //   clearInterval(this.interval);
       // }
+
+      if (this.refs && this.refs['hello']) {
+        console.log('hello: ',this.refs['hello']);
+      }
     }, 1000);
   }
 
@@ -29,7 +33,7 @@ class DisplayHello extends Component {
 
     const itemList = items.map(item => h('div', {}, [text(item)]))
 
-    let children = [new HelloBar({ times })].concat(itemList).concat([h('button', {}, [text('删除')])])
+    let children = [new HelloBar({ times, ref: 'hello' })].concat(itemList).concat([h('button', {}, [text('删除')])])
     return h('div', {}, children)
   }
 }
@@ -55,8 +59,8 @@ class HelloBar extends Component {
     return true;
   }
 
-  propsChanged(newProps) {
-    console.log('props变更了：', newProps);
+  propsChanged(newProps, oldProps) {
+    console.log('props变更了：', newProps, oldProps);
   }
 
   render() {

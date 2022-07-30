@@ -2,7 +2,7 @@
 import { NodeType, issame } from "./vnode";
 import { createElement } from "./dom";
 import { Component } from "./component";
-import { isFunctionType } from "./utils";
+import { isFunctionType, isStringType } from "./utils";
 
 const PatchType = {
   // 替换节点
@@ -167,6 +167,22 @@ function diffAttr(newVNode, oldVNode, patches) {
     if (newVNode.propsChanged && isFunctionType(newVNode.propsChanged)) {
       newVNode.propsChanged.apply(newVNode, [newVNode.props, oldVNode.props]);
     }
+
+    // 处理ref
+    const ref = newVNode.props.ref;
+    if (ref) {
+      
+      const directParentComponent = findDirectParentComponent(newVNode);
+      if (directParentComponent) {
+
+        if (isFunctionType(ref)) {
+          ref.apply(directParentComponent, [newVNode]);
+        } else if (isStringType(ref)) {
+          directParentComponent.refs[newVNode.props.ref] = newVNode;
+        }
+      }
+    }
+
   } else {
     // 比较 attr
     newVNode.attr = newVNode.attr || {};
@@ -300,6 +316,21 @@ function patch(patches) {
         }
     }
   });
+}
+
+
+// 向上查找 component 
+function findDirectParentComponent(node) {
+  if (node) {
+    if (node.parent) {
+      if (node.parent.holder) {
+        return node.parent.holder;
+      } else {
+        return findDirectParentComponent(node.parent);
+      }
+    }
+  }
+  return null;
 }
 
 export {

@@ -4,13 +4,15 @@ import { VComponentNode } from './vnode';
 
 class Component extends VComponentNode {
 
+  refs;
+
   constructor(props) {
     super();
-
+    this.refs = {};
     if (!props) {
       props = {};
     }
-
+    
     this.props = JSON.parse(JSON.stringify(props));
   }
 
@@ -19,7 +21,7 @@ class Component extends VComponentNode {
   }
 
   shouldComponentUpdate() {
-    
+
   }
 
   setData(data, complete) {
@@ -72,6 +74,20 @@ class Component extends VComponentNode {
       this.renderVNode.element = newElement;
     }
   }
+}
+
+// 向上查找 component 
+function findDirectParentComponent(node) {
+  if (node) {
+    if (node.parent) {
+      if (node.parent.holder) {
+        return node.parent.holder;
+      } else {
+        return findDirectParentComponent(node.parent);
+      }
+    }
+  }
+  return null;
 }
 
 export {
