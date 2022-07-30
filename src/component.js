@@ -76,19 +76,7 @@ class Component extends VComponentNode {
   }
 }
 
-// 向上查找 component 
-function findDirectParentComponent(node) {
-  if (node) {
-    if (node.parent) {
-      if (node.parent.holder) {
-        return node.parent.holder;
-      } else {
-        return findDirectParentComponent(node.parent);
-      }
-    }
-  }
-  return null;
-}
+
 
 export {
   Component
