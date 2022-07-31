@@ -1,4 +1,4 @@
-import { h, VTextNode, renderVNode, text, Component, render } from './vdom';
+import { h, VTextNode, text, Component, render } from './vdom';
 
 class DisplayHello extends Component {
 

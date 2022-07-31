@@ -2,14 +2,8 @@ import { VNormalNode, VTextNode } from './vnode';
 import { createElement } from './dom';
 import { h, text } from './h';
 import { Component } from './component';
-import { diff, patch } from './diff';
-
-function renderVNode(rootElement, vnode) {
-  if (rootElement) {
-    createElement(vnode);
-    rootElement.appendChild(vnode.element);
-  }
-}
+import { diff } from './diff';
+import { patch } from './patch';
 
 /**
  * 初始化渲染
@@ -42,7 +36,6 @@ function render(rootElement, component) {
 export {
   VNormalNode,
   VTextNode,
-  renderVNode,
   h,
   text,
   Component,

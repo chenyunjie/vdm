@@ -1,6 +1,7 @@
 import { createElement } from './dom';
-import { diff, patch } from './diff';
+import { diff } from './diff';
 import { VComponentNode } from './vnode';
+import { patch } from './patch';
 
 class Component extends VComponentNode {
 

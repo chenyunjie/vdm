@@ -1,42 +1,16 @@
 
 import { NodeType, issame } from "./vnode";
-import { createElement } from "./dom";
+
 import { Component } from "./component";
 import { isFunctionType, isStringType } from "./utils";
-
-const PatchType = {
-  // 替换节点
-  REPLACE: 1,
-
-  // 删除节点
-  REMOVE: 2,
-
-  // 追加节点
-  APPEND: 3,
-
-  APPEND_ALL: 4,
-  // 移动节点
-  MOVE: 5,
-
-  // 移除所有
-  REMOVE_ALL: 6,
-
-  // 属性移除
-  REMOVE_ATTR: 7,
-
-  // 属性添加
-  ADD_ATTR: 8,
-
-  // 替换属性
-  REPLACE_ATTR: 9
-};
+import { PatchType } from './patch';
 
 
 function diff(newVNode, oldVNode, parentNode) {
   
   let patches = [];
 
-  diffVNode(newVNode, oldVNode, parentNode, patches);
+  const patch = diffVNode(newVNode, oldVNode, parentNode, patches);
   
   const shouldCompareChildren = (patch && (patch.type != PatchType.REMOVE || patch.type != PatchType.REPLACE)) || !patch;
 
@@ -92,20 +66,24 @@ function diff(newVNode, oldVNode, parentNode) {
 
 function diffVNode(newVNode, oldVNode, parentNode, patches) {
 
+  let patch = null;
   if (!newVNode && oldVNode) {
-    patches.push({
+    
+    patch = {
       type: PatchType.REMOVE,
       newVNode,
       oldVNode,
       parentNode
-    });
+    };
+    patches.push(patch);
   } else if (newVNode && !oldVNode) {
-    patches.push({
+    patch = {
       type: PatchType.APPEND,
       newVNode,
       oldVNode,
       parentNode
-    });
+    };
+    patches.push(patch);
   } else if (newVNode && oldVNode) {
     // 元素未变更丢弃老的dom
     if (issame(newVNode, oldVNode)) {
@@ -124,22 +102,24 @@ function diffVNode(newVNode, oldVNode, parentNode, patches) {
         return diffVNode(newVNode.renderVNode, oldVNode.renderVNode, parentNode, patches);
       } else {
         // 替换
-        return patches.push({
+        patch = {
           type: PatchType.REPLACE,
           newVNode,
           oldVNode,
           parentNode
-        });
+        };
+        patches.push(patch);
       }
     } else {
       if (newVNode.tag != oldVNode.tag || (newVNode.type == NodeType.Text && newVNode.text != oldVNode.text)) {
         // 替换
-        patches.push({
+        patch = {
           type: PatchType.REPLACE,
           newVNode,
           oldVNode,
           parentNode
-        });
+        };
+        patches.push(patch);
       } else if (newVNode.tag == oldVNode.tag) {
         // 相同节点，比较属性
         diffAttr(newVNode, oldVNode, patches);
@@ -147,7 +127,7 @@ function diffVNode(newVNode, oldVNode, parentNode, patches) {
     }
   }
 
-  return null;
+  return patch;
 }
 
 /**
@@ -232,92 +212,6 @@ function diffAttr(newVNode, oldVNode, patches) {
   }
 }
 
-function createChildren(node) {
-  // 处理子元素
-  if (node.element && node.children && node.children.length > 0) {
-    node.children.forEach(child => {
-      createElement(child);
-      if (child.element) {
-        node.element.appendChild(child.element);
-      }
-      if (child.component && child.component.mounted) {
-        child.component.mounted.apply(child.component, []);
-        child.component._vnode = child;
-      }
-
-      if (child.children && child.children.length > 0) {
-        createChildren(child);
-      }
-    });
-  }
-}
-
-function patch(patches) {
-  patches.forEach(patch => {
-    const { newVNode, oldVNode, parentNode } = patch;
-    switch(patch.type) {
-      case PatchType.APPEND:
-
-        // 追加dom节点
-        if (parentNode && parentNode.element) {
-
-          createElement(newVNode);
-          
-          newVNode.parent = parentNode;
-          parentNode.element.appendChild(newVNode.element);
-          if (newVNode.holder && newVNode.holder.mounted) {
-            newVNode.holder.mounted.apply(newVNode.holder, []);
-          }
-          
-          // 创建子元素
-          createChildren(newVNode);
-        }
-        break;
-      case PatchType.APPEND_ALL:
-        break;
-      case PatchType.MOVE:
-        break;
-      case PatchType.REMOVE:
-        if (oldVNode.element) {
-          oldVNode.element.remove();
-        }
-
-        if (oldVNode.holder && oldVNode.holder.unmounted) {
-          oldVNode.holder.unmounted.apply(oldVNode.holder, []);
-        }
-        break;
-      case PatchType.REPLACE:
-
-        // 考虑组件情况的替换，因为组件与渲染节点(renderVNode) 共享element，此处无需做修改
-        createElement(newVNode);
-        if (newVNode.element && oldVNode.element) {
-          newVNode.parent = parentNode;
-          oldVNode.element.replaceWith(newVNode.element);
-        }
-
-        break;
-      case PatchType.REPLACE_ATTR:
-      case PatchType.ADD_ATTR:
-        // 添加/替换属性
-        if (newVNode.element) {
-          const { attrKey, value } = patch;
-          if (attrKey) {
-            newVNode.element.setAttribute(attrKey, value);
-          }
-        }
-        break;
-      case PatchType.REMOVE_ATTR:
-        // 属性移除
-        if (newVNode.element) {
-          const { attrKey } = patch;
-          if (attrKey) {
-            newVNode.element.removeAttribute(attrKey);
-          }
-        }
-    }
-  });
-}
-
 
 // 向上查找 component 
 function findDirectParentComponent(node) {
@@ -335,6 +229,5 @@ function findDirectParentComponent(node) {
 
 export {
   PatchType,
-  diff,
-  patch
+  diff
 }
