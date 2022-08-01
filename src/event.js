@@ -27,6 +27,8 @@ function catchEvent(element, event, handler) {
   events[event] = handler;
 
   element.addEventListener(event, handler, true);
+
+  eventPool.set(element, events);
 }
 
 /**
