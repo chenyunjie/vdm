@@ -21,7 +21,6 @@ const eventPool = new Map();
  * @param {*} handler 
  */
 function catchEvent(element, event, handler) {
-
   const events = eventHandlersForElement(element, event);
 
   events[event] = handler;
@@ -59,7 +58,9 @@ function unbindAllEvent(element) {
   if (element) {
     const events = eventPool.get(element);
     if (events) {
-      Object.keys(events).forEach(e => element.removeEventListener(e));
+      Object.keys(events).forEach(e => {
+        element.removeEventListener(e, events[e]);
+      });
     }
 
     eventPool.delete(element);

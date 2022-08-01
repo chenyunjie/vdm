@@ -37,6 +37,7 @@ class DisplayHello extends Component {
   }
 
   reset() {
+    clearInterval(this.interval);
     this.setData({ times: 0, unrelated: 0 }, () => {
       this.interval = setInterval(() => {
         let { unrelated, times } = this.data;

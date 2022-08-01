@@ -181,6 +181,7 @@ function diffAttr(newVNode, oldVNode, patches) {
         // 新值无，旧值有，移除
         patches.push({
           newVNode,
+          oldVNode,
           attrKey: key,
           type: PatchType.REMOVE_ATTR
         });
@@ -188,6 +189,7 @@ function diffAttr(newVNode, oldVNode, patches) {
         // 新值有，旧值无，添加
         patches.push({
           newVNode,
+          oldVNode,
           attrKey: key,
           value: newValue,
           type: PatchType.ADD_ATTR
@@ -198,6 +200,7 @@ function diffAttr(newVNode, oldVNode, patches) {
           // 替换
           patches.push({
             newVNode,
+            oldVNode,
             attrKey: key,
             value: newValue,
             type: PatchType.REPLACE_ATTR
