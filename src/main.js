@@ -18,13 +18,10 @@ class DisplayHello extends Component {
       unrelated++;
       times++;
       this.setData({ unrelated, times });
-      // if (unrelated > 10) {
-      //   clearInterval(this.interval);
-      // }
-
-      if (this.refs && this.refs['hello']) {
-        console.log('hello: ',this.refs['hello']);
+      if (unrelated > 10) {
+        clearInterval(this.interval);
       }
+
     }, 1000);
   }
 
@@ -33,8 +30,25 @@ class DisplayHello extends Component {
 
     const itemList = items.map(item => h('div', {}, [text(item)]))
 
-    let children = [new HelloBar({ times, ref: 'hello' })].concat(itemList).concat([h('button', {}, [text('删除')])])
+    let children = [new HelloBar({ times, ref: 'hello' })].concat(itemList).concat([h('button', {
+      'catch:tap': this.reset.bind(this)
+    }, [text('重置')])])
     return h('div', {}, children)
+  }
+
+  reset() {
+    this.setData({ times: 0, unrelated: 0 }, () => {
+      this.interval = setInterval(() => {
+        let { unrelated, times } = this.data;
+        unrelated++;
+        times++;
+        this.setData({ unrelated, times });
+        if (unrelated > 10) {
+          clearInterval(this.interval);
+        }
+  
+      }, 1000);
+    });
   }
 }
 
@@ -60,17 +74,20 @@ class HelloBar extends Component {
   }
 
   propsChanged(newProps, oldProps) {
-    console.log('props变更了：', newProps, oldProps);
+    // console.log('props变更了：', newProps, oldProps);
   }
 
   render() {
     const { times } = this.props;
 
     const  name = times % 2 == 0 ? '南京' : '世界';
-    console.log('重新渲染');
     return h('span', {
                         'style': times % 2 == 0 ? 'color: #ff4f4f' : 'color: #4386f5'
                     }, [text("你好," + name + "," + times + "秒")]);
+  }
+
+  onTap(e) {
+    console.log('添加事件', e);
   }
 }
 

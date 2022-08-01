@@ -1,9 +1,8 @@
 
-import { NodeType, issame } from "./vnode";
-
-import { Component } from "./component";
+import { NodeType, issame, VComponentNode } from "./vnode";
 import { isFunctionType, isStringType } from "./utils";
 import { PatchType } from './patch';
+import { event, isEventAttr, parseEventAttr } from "./event";
 
 
 function diff(newVNode, oldVNode, parentNode) {
@@ -94,7 +93,7 @@ function diffVNode(newVNode, oldVNode, parentNode, patches) {
       newVNode.parent = parentNode;
     }
     
-    if (newVNode instanceof Component && oldVNode instanceof Component) {
+    if (newVNode instanceof VComponentNode && oldVNode instanceof VComponentNode) {
       // 同为组件的情况下
       if (newVNode.constructor.name == oldVNode.constructor.name) {
         diffAttr(newVNode, oldVNode, patches);
@@ -142,7 +141,7 @@ function diffAttr(newVNode, oldVNode, patches) {
     patches = [];
   }
 
-  if (newVNode instanceof Component) {
+  if (newVNode instanceof VComponentNode) {
     // props
     if (newVNode.propsChanged && isFunctionType(newVNode.propsChanged)) {
       newVNode.propsChanged.apply(newVNode, [newVNode.props, oldVNode.props]);
@@ -174,7 +173,7 @@ function diffAttr(newVNode, oldVNode, patches) {
     let i = 0;
     while(i < maxLength) {
       const key = newAttrSet[i];
-      
+
       const newValue = newVNode.attr[key];
       const oldValue = oldVNode.attr[key];
 
@@ -196,7 +195,6 @@ function diffAttr(newVNode, oldVNode, patches) {
       } else if (newValue && oldValue) {
         // 都有值，比较值内容
         if (newValue !== oldValue) {
-          console.log('属性变更了: ', key, oldValue, '->', newValue);
           // 替换
           patches.push({
             newVNode,
@@ -206,7 +204,7 @@ function diffAttr(newVNode, oldVNode, patches) {
           });
         }
       }
-
+      
       i++;
     }
   }

@@ -1,4 +1,7 @@
+
 import { createElement } from "./dom";
+import { event, isEventAttr, unbindAllEvent } from "./event";
+import { VComponentNode } from './vnode';
 
 const PatchType = {
   // 替换节点
@@ -42,6 +45,9 @@ function patch(patches) {
 
           createElement(newVNode);
           
+          // 添加事件
+          bindEventForVNode(newVNode);
+          
           newVNode.parent = parentNode;
           parentNode.element.appendChild(newVNode.element);
           if (newVNode.holder && newVNode.holder.mounted) {
@@ -58,6 +64,10 @@ function patch(patches) {
         break;
       case PatchType.REMOVE:
         if (oldVNode.element) {
+          // 移除元素上的所有事件
+          unbindAllEvent(oldVNode.element);
+
+          // 移除dom元素
           oldVNode.element.remove();
         }
 
@@ -71,7 +81,13 @@ function patch(patches) {
         createElement(newVNode);
         if (newVNode.element && oldVNode.element) {
           newVNode.parent = parentNode;
+          // 移除元素上的所有事件
+          unbindAllEvent(oldVNode.element);
+
           oldVNode.element.replaceWith(newVNode.element);
+
+          // 绑定新事件
+          bindEventForVNode(newVNode);
         }
 
         break;
@@ -102,6 +118,7 @@ function createChildren(node) {
   if (node.element && node.children && node.children.length > 0) {
     node.children.forEach(child => {
       createElement(child);
+      bindEventForVNode(child);
       if (child.element) {
         node.element.appendChild(child.element);
       }
@@ -112,6 +129,24 @@ function createChildren(node) {
 
       if (child.children && child.children.length > 0) {
         createChildren(child);
+      }
+    });
+  }
+}
+
+/**
+ * 添加事件
+ * @param {*} vnode 
+ */
+function bindEventForVNode(vnode) {
+  let node = vnode;
+  if (vnode instanceof VComponentNode) {
+    node = vnode.renderVNode;
+  }
+  if (vnode.element) {
+    Object.keys(node.attr || {}).forEach(key => {
+      if (isEventAttr(key)) {
+        event(node.element, key, node.attr[key]);
       }
     });
   }
