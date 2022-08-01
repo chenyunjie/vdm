@@ -7,22 +7,23 @@ class DisplayHello extends Component {
     this.data = {
       items: [],
       times: 0,
-      unrelated: 0
+      unrelated: 0,
+      total: 0
     }
   }
 
   mounted() {
 
-    this.interval = setInterval(() => {
-      let { unrelated, times } = this.data;
-      unrelated++;
-      times++;
-      this.setData({ unrelated, times });
-      if (unrelated > 10) {
-        clearInterval(this.interval);
-      }
+    // this.interval = setInterval(() => {
+    //   let { unrelated, times } = this.data;
+    //   unrelated++;
+    //   times++;
+    //   this.setData({ unrelated, times });
+    //   if (unrelated > 10) {
+    //     clearInterval(this.interval);
+    //   }
 
-    }, 1000);
+    // }, 1000);
   }
 
   render() {
@@ -31,25 +32,17 @@ class DisplayHello extends Component {
     const itemList = items.map(item => h('div', {}, [text(item)]))
 
     let children = [new HelloBar({ times, ref: 'hello' })].concat(itemList).concat([h('button', {
-      'catch:tap': this.reset.bind(this)
-    }, [text('重置')])])
+      'catch:tap': this.add.bind(this)
+    }, [text('添加')])])
     return h('div', {}, children)
   }
 
-  reset() {
-    clearInterval(this.interval);
-    this.setData({ times: 0, unrelated: 0 }, () => {
-      this.interval = setInterval(() => {
-        let { unrelated, times } = this.data;
-        unrelated++;
-        times++;
-        this.setData({ unrelated, times });
-        if (unrelated > 10) {
-          clearInterval(this.interval);
-        }
-  
-      }, 1000);
-    });
+  add() {
+    console.log('添加条目');
+    let { items, total } = this.data;
+    total++;
+    items.push('条目 ' + total);
+    this.setData({ items, total });
   }
 }
 

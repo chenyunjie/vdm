@@ -48,6 +48,9 @@ function patch(patches) {
           if (newVNode.holder && newVNode.holder.mounted) {
             newVNode.holder.mounted.apply(newVNode.holder, []);
           }
+
+          // 绑定新事件
+          bindEventForVNode(newVNode);
           
           // 创建子元素
           createChildren(newVNode);
@@ -78,6 +81,18 @@ function patch(patches) {
           newVNode.parent = parentNode;
           oldVNode.element.replaceWith(newVNode.element);
         }
+        
+        // 删除旧元素事件
+        if (oldVNode && oldVNode.element) {
+          // 移除元素上的所有事件
+          unbindAllEvent(oldVNode.element);
+        }
+
+        // 绑定新事件
+        bindEventForVNode(newVNode);
+
+        // 考虑子组件
+        createChildren(newVNode);
 
         break;
       case PatchType.REPLACE_ATTR:

@@ -11,7 +11,7 @@ function diff(newVNode, oldVNode, parentNode) {
 
   const patch = diffVNode(newVNode, oldVNode, parentNode, patches);
   
-  const shouldCompareChildren = (patch && (patch.type != PatchType.REMOVE || patch.type != PatchType.REPLACE)) || !patch;
+  const shouldCompareChildren = (patch && (patch.type != PatchType.REMOVE && patch.type != PatchType.REPLACE)) || !patch;
 
   if (oldVNode && newVNode && shouldCompareChildren) {
     // 两节点相同，处理后续子元素节点
