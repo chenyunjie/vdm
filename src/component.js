@@ -2,6 +2,7 @@ import { createElement } from './dom';
 import { diff } from './diff';
 import { VComponentNode } from './vnode';
 import { patch } from './patch';
+import { isFunctionType } from './utils';
 
 class Component extends VComponentNode {
 
@@ -77,8 +78,47 @@ class Component extends VComponentNode {
   }
 }
 
+/**
+ * 根据配置构建Component实例
+ * @param {*} config 
+ *  config : {
+ *    lifetime: {
+ *      created: function() {},
+ *      attached: function() {},
+ *      destroyed: function() {}
+ *    },
+ *    properties: {
+ *          
+ *    }
+ *  }
+ */
+function BuildComponent(config, CC) {
+  const component = new CC(config.properties);
 
+  const { lifetime } = config;
+
+  if (lifetime) {
+    let { created, attached, destroyed } = lifetime;
+
+    if (created && isFunctionType(created)) {
+      created.apply(component, []);
+    }
+
+    if (attached && isFunctionType(attached)) {
+      attached = attached.bind(component);
+      component.mounted = attached;
+    }
+
+    if (destroyed && isFunctionType(destroyed)) {
+      destroyed = destroyed.bind(component);
+      component.unmounted = destroyed;
+    }
+  }
+
+  return component;
+}
 
 export {
-  Component
+  Component,
+  BuildComponent
 }

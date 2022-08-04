@@ -1,3 +1,4 @@
+import { BuildComponent } from './component';
 import { h, VTextNode, text, Component, render } from './vdom';
 
 class DisplayHello extends Component {
@@ -30,7 +31,9 @@ class DisplayHello extends Component {
 
     const itemList = items.map(item => h('div', {}, [text(item)]))
 
-    let children = [new HelloBar({ times, ref: 'hello' })].concat(itemList).concat([h('button', {
+    const hello = BuildComponent({ properties: { times, ref: 'hello'} }, HelloBar);
+
+    let children = [hello].concat(itemList).concat([h('button', {
       'catch:tap': this.add.bind(this)
     }, [text('添加')])])
     return h('div', {}, children)
