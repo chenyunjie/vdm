@@ -16,28 +16,49 @@ const eventPool = new Map();
  *  addEventListener(事件名, 事件响应函数, 是否为事件捕获)
  * @param {*} element 
  *  dom元素节点
- * @param {*} event 
+ * @param {*} eventType 
  *  事件类型：example：click
  * @param {*} handler 
  */
-function catchEvent(element, event, handler) {
-  const events = eventHandlersForElement(element, event);
-
-  events[event] = handler;
-
-  element.addEventListener(event, handler, true);
-
-  eventPool.set(element, events);
+function catchEvent(element, eventType, handler) {
+  toggleEvent(element, eventType, handler, false);
 }
 
 /**
  * 注册dom事件，保留事件冒泡
  * @param {*} element 
- * @param {*} name 
+ * @param {*} eventType 
  * @param {*} func 
  */
-function bindEvent(element, name, func) {
+function bindEvent(element, eventType, func) {
+  toggleEvent(element, eventType, handler, true);
+}
 
+/**
+ * 挂载事件
+ * 
+ * @param {*} element 
+ * @param {*} eventType 
+ * @param {*} handler 
+ * @param {*} propagation 是否冒泡传播事件
+ */
+function toggleEvent(element, eventType, handler, propagation) {
+  const events = eventHandlersForElement(element, event);
+
+  const wrapHandler = function(e) {
+    if (e && !propagation) {
+      e.stopPropagation();
+    }
+    if (handler) {
+      handler(e);
+    }
+  }
+
+  events[eventType] = wrapHandler;
+
+  element.addEventListener(eventType, wrapHandler);
+
+  eventPool.set(element, events);
 }
 
 /**
@@ -47,7 +68,10 @@ function bindEvent(element, name, func) {
  * @param {*} func 
  */
 function unbindEvent(element, name, func) {
-
+  if (element) {
+    element.removeEventListener()
+    eventPool.delete(element);
+  }
 }
 
 /**
