@@ -21,10 +21,10 @@ function render(rootElement, component) {
 
   // 设置组件父节点
   component.parent = rootNode;
-
+  component.renderVNode = newVNode;
   // 设置节点所属组件
   newVNode.holder = component;
-  const patches = diff(newVNode, null, rootNode);
+  const patches = diff(component, null, rootNode);
 
   // 应用diff内容
   patch(patches);

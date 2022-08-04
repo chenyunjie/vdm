@@ -1,6 +1,8 @@
 
-import { createElement } from "./dom";
+import { createElement, removeElement, replaceElement } from "./dom";
 import { event, isEventAttr, unbindAllEvent } from "./event";
+import { lifecycleMounted, lifecycleUnmounted } from "./lifecycle";
+import { isFunctionType } from "./utils";
 import { VComponentNode } from './vnode';
 
 const PatchType = {
@@ -35,6 +37,7 @@ const PatchType = {
  * @param {*} patches 
  */
 function patch(patches) {
+  console.log('patches:', patches);
   patches.forEach(patch => {
     const { newVNode, oldVNode, parentNode } = patch;
     switch(patch.type) {
@@ -45,9 +48,8 @@ function patch(patches) {
           createElement(newVNode);
           newVNode.parent = parentNode;
           parentNode.element.appendChild(newVNode.element);
-          if (newVNode.holder && newVNode.holder.mounted) {
-            newVNode.holder.mounted.apply(newVNode.holder, []);
-          }
+
+          lifecycleMounted(newVNode);
 
           // 绑定新事件
           bindEventForVNode(newVNode);
@@ -66,22 +68,32 @@ function patch(patches) {
           unbindAllEvent(oldVNode.element);
 
           // 移除dom元素
-          oldVNode.element.remove();
+          removeElement(oldVNode);
         }
 
-        if (oldVNode.holder && oldVNode.holder.unmounted) {
-          oldVNode.holder.unmounted.apply(oldVNode.holder, []);
-        }
+        // 组件卸载
+        lifecycleUnmounted(oldVNode);
         break;
       case PatchType.REPLACE:
 
-        // 考虑组件情况的替换，因为组件与渲染节点(renderVNode) 共享element，此处无需做修改
+        /// 完成元素节点替换
         createElement(newVNode);
+
         if (newVNode.element && oldVNode.element) {
           newVNode.parent = parentNode;
-          oldVNode.element.replaceWith(newVNode.element);
+          replaceElement(oldVNode, newVNode);
         }
+
+        /// 完成组件生命周期
+
+        // 新组件加载
+        lifecycleMounted(newVNode);
+
+        // 旧组件卸载
+        lifecycleUnmounted(oldVNode);
         
+        /// 事件处理
+
         // 删除旧元素事件
         if (oldVNode && oldVNode.element) {
           // 移除元素上的所有事件
@@ -91,7 +103,7 @@ function patch(patches) {
         // 绑定新事件
         bindEventForVNode(newVNode);
 
-        // 考虑子组件
+        /// 处理子组件
         createChildren(newVNode);
 
         break;
@@ -142,10 +154,8 @@ function createChildren(node) {
       if (child.element) {
         node.element.appendChild(child.element);
       }
-      if (child.component && child.component.mounted) {
-        child.component.mounted.apply(child.component, []);
-        child.component._vnode = child;
-      }
+      // 组件加载
+      lifecycleMounted(child);
 
       if (child.children && child.children.length > 0) {
         createChildren(child);

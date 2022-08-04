@@ -1,5 +1,9 @@
-import { VNormalNode, VTextNode, VComponentNode } from './vnode';
+import { VNormalNode, VTextNode, VComponentNode, RenderNode } from './vnode';
 
+/**
+ * 根据虚拟节点创建dom节点
+ * @param {*} vnode 
+ */
 function createElement(vnode) {
   let element = null;
   if (vnode instanceof VTextNode) {
@@ -13,6 +17,33 @@ function createElement(vnode) {
   }
 }
 
+/**
+ * 移除dom节点
+ * @param {*} vnode 
+ */
+function removeElement(vnode) {
+  if (vnode.element) {
+    vnode.element.remove();
+  }
+}
+
+/**
+ * 节点替换
+ * @param {*} vnode 
+ * @param {*} replacement 
+ */
+function replaceElement(vnode, replacement) {
+
+  if (vnode instanceof RenderNode && replacement instanceof RenderNode) {
+    if (vnode.element && replacement.element) {
+      vnode.element.replaceWith(replacement.element);
+    }
+  }
+ 
+}
+
 export {
-createElement
+  createElement,
+  removeElement,
+  replaceElement
 }

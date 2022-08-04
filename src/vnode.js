@@ -76,5 +76,6 @@ export {
   VTextNode,
   VComponentNode,
   NodeType,
+  RenderNode,
   issame
 }
