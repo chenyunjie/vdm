@@ -42,8 +42,48 @@ function replaceElement(vnode, replacement) {
  
 }
 
+/**
+ * 追加元素
+ * 
+ * @param {*} parentVNode 
+ * @param {*} childVNode 
+ */
+function appendChild(parentVNode, childVNode) {
+  if (parentVNode && childVNode && parentVNode.element && childVNode.element) {
+    childVNode.parent = parentVNode;
+    parentVNode.element.appendChild(childVNode.element);
+  }
+}
+
+/**
+ * 设置属性值
+ * 
+ * @param {*} element 
+ * @param {*} attrName 
+ * @param {*} attrValue 
+ */
+function setAttr(element, attrName, attrValue='') {
+  if (element && attrName) {
+    element.setAttribute(attrName, attrValue);
+  }
+}
+
+/**
+ * 移除属性
+ * @param {*} element 
+ * @param {*} attrName 
+ */
+function removeAttr(element, attrName) {
+  if (element && attrName) {
+    element.removeAttribute(attrName);
+  }
+}
+
 export {
   createElement,
   removeElement,
-  replaceElement
+  replaceElement,
+  appendChild,
+  setAttr,
+  removeAttr
 }

@@ -1,5 +1,5 @@
 
-import { createElement, removeElement, replaceElement } from "./dom";
+import { appendChild, createElement, removeAttr, removeElement, replaceElement, setAttr } from "./dom";
 import { event, isEventAttr, parseEventAttr, unbindAllEvent, unbindEvent } from "./event";
 import { lifecycleMounted, lifecycleUnmounted } from "./lifecycle";
 import { isFunctionType } from "./utils";
@@ -45,10 +45,14 @@ function patch(patches) {
 
         // 追加dom节点
         if (parentNode && parentNode.element) {
-          createElement(newVNode);
-          newVNode.parent = parentNode;
-          parentNode.element.appendChild(newVNode.element);
 
+          // 创建真实dom节点
+          createElement(newVNode);
+
+          // 追加节点
+          appendChild(parentNode, newVNode);
+
+          // 调用组件生命周期函数
           lifecycleMounted(newVNode);
 
           // 绑定新事件
@@ -113,14 +117,15 @@ function patch(patches) {
         // 添加/替换属性
         if (newVNode.element) {
           const { attrKey, value } = patch;
-          if (attrKey) {
-            newVNode.element.setAttribute(attrKey, value);
-          }
+
+          // 设置属性
+          setAttr(newVNode.element, attrKey, value);
 
           if (isEventAttr(attrKey)) {
+
             if (oldVNode && oldVNode.element) {
-              // 移除元素上的所有事件
-              unbindAllEvent(oldVNode.element);
+              const { eventType } = parseEventAttr(attrKey);
+              unbindEvent(oldVNode.element, eventType);
             }
   
             // 绑定新事件
@@ -132,10 +137,11 @@ function patch(patches) {
         // 属性移除
         if (newVNode.element) {
           const { attrKey } = patch;
-          if (attrKey) {
-            newVNode.element.removeAttribute(attrKey);
-          }
 
+          // 删除属性
+          removeAttr(newVNode.element, attrKey);
+
+          // 如果是事件则移除dom事件
           if (isEventAttr(key)) {
             if (oldVNode && oldVNode.element) {
               const { eventType } = parseEventAttr(attrKey);
@@ -143,7 +149,6 @@ function patch(patches) {
               unbindEvent(oldVNode.element, eventType);
             }
           }
-          
         }
     }
   });
