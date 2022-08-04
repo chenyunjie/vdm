@@ -15,7 +15,6 @@ const PatchType = {
   // 追加节点
   APPEND: 3,
 
-  APPEND_ALL: 4,
   // 移动节点
   MOVE: 5,
 
@@ -37,7 +36,6 @@ const PatchType = {
  * @param {*} patches 
  */
 function patch(patches) {
-  console.log('patches:', patches);
   patches.forEach(patch => {
     const { newVNode, oldVNode, parentNode } = patch;
     switch(patch.type) {
@@ -61,8 +59,6 @@ function patch(patches) {
           // 创建子元素
           createChildren(newVNode);
         }
-        break;
-      case PatchType.APPEND_ALL:
         break;
       case PatchType.MOVE:
         break;
