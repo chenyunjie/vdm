@@ -2,7 +2,7 @@
 import { NodeType, issame, VComponentNode } from "./vnode";
 import { isFunctionType, isStringType } from "./utils";
 import { PatchType } from './patch';
-import { event, isEventAttr, parseEventAttr } from "./event";
+import { event, isEventAttr } from "./event";
 
 
 function diff(newVNode, oldVNode, parentNode) {

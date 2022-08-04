@@ -69,7 +69,14 @@ function toggleEvent(element, eventType, handler, propagation) {
  */
 function unbindEvent(element, eventType, handler) {
   if (element) {
-    element.removeEventListener(eventType, handler);
+    if (handler) {
+      element.removeEventListener(eventType, handler);
+    } else {
+      const events = eventHandlersForElement(element);
+      if (events && events[eventType]) {
+        element.removeEventListener(eventType, events[eventType]);
+      }
+    }
     eventPool.delete(element);
   }
 }
@@ -135,9 +142,9 @@ function parseEventAttr(attrName, attrValue) {
     let bindEventTypeName = attrName.split(':')[1];
 
     if (eventmap[bindEventTypeName]) {
-      return { bindType, event: eventmap[bindEventTypeName], handler: attrValue };
+      return { bindType, eventType: eventmap[bindEventTypeName], handler: attrValue };
     } else {
-      return { bindType, event: bindEventTypeName, handler: attrValue };
+      return { bindType, eventType: bindEventTypeName, handler: attrValue };
     }
   }
   return null;
@@ -151,11 +158,11 @@ function parseEventAttr(attrName, attrValue) {
  * @param {*} attrValue 
  */
 function event(element, attrName, attrValue) {
-  const { bindType, event, handler } = parseEventAttr(attrName);
+  const { bindType, eventType, handler } = parseEventAttr(attrName);
   if (bindType == 'bind') {
-    bindEvent(element, event, attrValue);
+    bindEvent(element, eventType, attrValue);
   } else if (bindType == 'catch') {
-    catchEvent(element, event, attrValue);
+    catchEvent(element, eventType, attrValue);
   }
 }
 

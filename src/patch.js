@@ -1,6 +1,6 @@
 
 import { createElement, removeElement, replaceElement } from "./dom";
-import { event, isEventAttr, unbindAllEvent } from "./event";
+import { event, isEventAttr, parseEventAttr, unbindAllEvent, unbindEvent } from "./event";
 import { lifecycleMounted, lifecycleUnmounted } from "./lifecycle";
 import { isFunctionType } from "./utils";
 import { VComponentNode } from './vnode';
@@ -136,10 +136,14 @@ function patch(patches) {
             newVNode.element.removeAttribute(attrKey);
           }
 
-          if (oldVNode && oldVNode.element) {
-            // 移除元素上的所有事件
-            unbindAllEvent(oldVNode.element);
+          if (isEventAttr(key)) {
+            if (oldVNode && oldVNode.element) {
+              const { eventType } = parseEventAttr(attrKey);
+              // 移除元素上的所有事件
+              unbindEvent(oldVNode.element, eventType);
+            }
           }
+          
         }
     }
   });
