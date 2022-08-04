@@ -1,6 +1,6 @@
-# 类react mvvm库
+# 类react库
 
-类react库，仅学习使用
+仅学习使用
 
 ## 运行
 
