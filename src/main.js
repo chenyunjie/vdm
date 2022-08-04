@@ -13,17 +13,16 @@ class DisplayHello extends Component {
   }
 
   mounted() {
+    this.interval = setInterval(() => {
+      let { unrelated, times } = this.data;
+      unrelated++;
+      times++;
+      this.setData({ unrelated, times });
+      if (unrelated > 10) {
+        clearInterval(this.interval);
+      }
 
-    // this.interval = setInterval(() => {
-    //   let { unrelated, times } = this.data;
-    //   unrelated++;
-    //   times++;
-    //   this.setData({ unrelated, times });
-    //   if (unrelated > 10) {
-    //     clearInterval(this.interval);
-    //   }
-
-    // }, 1000);
+    }, 1000);
   }
 
   render() {

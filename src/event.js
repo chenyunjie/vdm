@@ -64,12 +64,12 @@ function toggleEvent(element, eventType, handler, propagation) {
 /**
  * 移除dom事件
  * @param {*} element 
- * @param {*} name 
- * @param {*} func 
+ * @param {*} eventType 
+ * @param {*} handler 
  */
-function unbindEvent(element, name, func) {
+function unbindEvent(element, eventType, handler) {
   if (element) {
-    element.removeEventListener()
+    element.removeEventListener(eventType, handler);
     eventPool.delete(element);
   }
 }
@@ -83,7 +83,7 @@ function unbindAllEvent(element) {
     const events = eventPool.get(element);
     if (events) {
       Object.keys(events).forEach(e => {
-        element.removeEventListener(e, events[e]);
+        unbindEvent(element, e, events[e]);
       });
     }
 
