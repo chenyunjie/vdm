@@ -1,7 +1,7 @@
 import { VNormalNode, VTextNode } from './vnode';
 import { createElement } from './dom';
 import { h, text } from './h';
-import { Component } from './component';
+import { Component, c } from './component';
 import { diff } from './diff';
 import { patch } from './patch';
 
@@ -32,12 +32,10 @@ function render(rootElement, component) {
   component.renderVNode = newVNode;
 }
 
+const Tiny = { c, h, Component, render };
+
+export default Tiny;
 
 export {
-  VNormalNode,
-  VTextNode,
-  h,
-  text,
-  Component,
-  render
+  Component
 }

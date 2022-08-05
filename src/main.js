@@ -1,5 +1,4 @@
-import { BuildComponent } from './component';
-import { h, VTextNode, text, Component, render } from './vdom';
+import Tiny, { Component } from './vdom';
 
 class DisplayHello extends Component {
 
@@ -29,13 +28,11 @@ class DisplayHello extends Component {
   render() {
     const { name, times, items } = this.data;
 
-    const itemList = items.map(item => h('div', {}, [text(item)]))
-
-    const hello = BuildComponent({ properties: { times, ref: 'hello'} }, HelloBar);
+    const itemList = items.map(item => <div>{item}</div>)
 
     return (
       <div>
-        {hello}
+        <HelloBar times={times} ref="hello" />
         {itemList}
         <button catch:tap={this.add.bind(this)}>添加</button>
       </div>
@@ -84,4 +81,4 @@ class HelloBar extends Component {
   }
 }
 
-render(document.body, new DisplayHello({ name: "世界"}))
+Tiny.render(document.body, new DisplayHello({ name: "世界"}))
