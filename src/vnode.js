@@ -9,9 +9,6 @@ const NodeType = {
 class RenderNode extends Object {
   // 父元素节点 RenderNode类型
   parent;
-
-  // 所属组件
-  holder;
 }
 
 /**
@@ -34,6 +31,9 @@ class VNormalNode extends RenderNode {
   // 元素类型
   type;
 
+  // 所属组件
+  holder;
+
   constructor(tag, attr, children) {
     super();
     this.tag = tag;
@@ -51,6 +51,9 @@ class VTextNode extends RenderNode {
 
   // 文本内容
   text;
+
+  // 所属组件
+  holder;
 
   constructor(text) {
     super();
