@@ -33,10 +33,13 @@ class DisplayHello extends Component {
 
     const hello = BuildComponent({ properties: { times, ref: 'hello'} }, HelloBar);
 
-    let children = [hello].concat(itemList).concat([h('button', {
-      'catch:tap': this.add.bind(this)
-    }, [text('添加')])])
-    return h('div', {}, children)
+    return (
+      <div>
+        {hello}
+        {itemList}
+        <button catch:tap={this.add.bind(this)}>添加</button>
+      </div>
+    );
   }
 
   add() {
@@ -46,17 +49,6 @@ class DisplayHello extends Component {
     items.push('条目 ' + total);
     this.setData({ items, total });
   }
-}
-
-// 需要考虑两种情况
-// 1. 条件式组件加载
-// 2. 组件引用参数变更
-
-// 收集条件参数
-// if 条件
-// 三目运算符 a > b ? a : b
-function conditionRender(ctx, expression, component) {
-
 }
 
 class HelloBar extends Component {
@@ -77,9 +69,14 @@ class HelloBar extends Component {
     const { times } = this.props;
 
     const  name = times % 2 == 0 ? '南京' : '世界';
-    return h('span', {
-                        'style': times % 2 == 0 ? 'color: #ff4f4f' : 'color: #4386f5'
-                    }, [text("你好," + name + "," + times + "秒")]);
+
+    const expression = '你好,' + name + ',' + times + '秒';
+
+    return (
+      <span style={times % 2 == 0 ? 'color: #ff4f4f' : 'color: #4386f5'}>
+        { expression }
+      </span>
+    );
   }
 
   onTap(e) {

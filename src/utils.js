@@ -16,7 +16,13 @@ function isStringType(string) {
   return typeof string == 'string';
 }
 
+// 是否为数组
+function isArrayType(array) {
+ return typeof array == 'array';
+}
+
 export {
   isFunctionType,
-  isStringType
+  isStringType,
+  isArrayType
 }
