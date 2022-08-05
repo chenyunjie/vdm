@@ -7,8 +7,7 @@ class DisplayHello extends Component {
     this.data = {
       items: [],
       times: 0,
-      unrelated: 0,
-      total: 0
+      unrelated: 0
     }
   }
 
@@ -35,16 +34,21 @@ class DisplayHello extends Component {
         <HelloBar times={times} ref="hello" />
         {itemList}
         <button catch:tap={this.add.bind(this)} style="position: fixed; left: 200px; top: 20px;">添加</button>
+        <button catch:tap={this.delete.bind(this)} style="position: fixed; left: 260px; top: 20px;">删除</button>
       </div>
     );
   }
 
   add() {
-    console.log('添加条目');
-    let { items, total } = this.data;
-    total++;
-    items.push('条目 ' + total);
-    this.setData({ items, total });
+    let { items } = this.data;
+    items.push('条目 ' + items.length);
+    this.setData({ items });
+  }
+
+  delete() {
+    const { items } = this.data;
+    items.splice(items.length - 1, 1);
+    this.setData({ items });
   }
 }
 

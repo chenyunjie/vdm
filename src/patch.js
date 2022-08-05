@@ -172,7 +172,7 @@ function createChildren(node) {
 
       // 追加元素
       appendChild(node, child);
-      
+
       // 组件加载
       lifecycleMounted(child);
 
@@ -188,7 +188,7 @@ function setInitialAttr(vnode) {
   if (!(vnode instanceof VComponentNode) && !(vnode instanceof VTextNode)) {
     const keys = Object.keys(vnode.attr || {});
     keys.forEach(key => {
-      if (vnode.element) {
+      if (vnode.element && !isEventAttr(key)) {
         setAttr(vnode.element, key, vnode.attr[key]);
       }
     });
