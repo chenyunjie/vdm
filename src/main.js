@@ -34,7 +34,7 @@ class DisplayHello extends Component {
       <div>
         <HelloBar times={times} ref="hello" />
         {itemList}
-        <button catch:tap={this.add.bind(this)}>添加</button>
+        <button catch:tap={this.add.bind(this)} style="position: fixed; left: 200px; top: 20px;">添加</button>
       </div>
     );
   }
@@ -56,6 +56,10 @@ class HelloBar extends Component {
 
   shouldComponentUpdate() {
     return true;
+  }
+
+  mounted() {
+    console.log('HelloBar loaded');
   }
 
   propsChanged(newProps, oldProps) {

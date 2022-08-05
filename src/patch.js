@@ -3,7 +3,7 @@ import { appendChild, createElement, removeAttr, removeElement, replaceElement, 
 import { event, isEventAttr, parseEventAttr, unbindAllEvent, unbindEvent } from "./event";
 import { lifecycleMounted, lifecycleUnmounted } from "./lifecycle";
 import { isFunctionType } from "./utils";
-import { VComponentNode } from './vnode';
+import { VComponentNode, VTextNode } from './vnode';
 
 const PatchType = {
   // 替换节点
@@ -47,6 +47,9 @@ function patch(patches) {
           // 创建真实dom节点
           createElement(newVNode);
 
+          // 设置属性
+          setInitialAttr(newVNode);
+
           // 追加节点
           appendChild(parentNode, newVNode);
 
@@ -84,6 +87,9 @@ function patch(patches) {
           replaceElement(oldVNode, newVNode);
         }
 
+        // 设置元素属性
+        setInitialAttr(newVNode);
+
         /// 完成组件生命周期
 
         // 新组件加载
@@ -114,9 +120,6 @@ function patch(patches) {
         if (newVNode.element) {
           const { attrKey, value } = patch;
 
-          // 设置属性
-          setAttr(newVNode.element, attrKey, value);
-
           if (isEventAttr(attrKey)) {
 
             if (oldVNode && oldVNode.element) {
@@ -126,6 +129,9 @@ function patch(patches) {
   
             // 绑定新事件
             bindEventForVNode(newVNode);
+          } else {
+            // 设置属性
+            setAttr(newVNode.element, attrKey, value);
           }
         }
         break;
@@ -154,16 +160,36 @@ function createChildren(node) {
   // 处理子元素
   if (node.element && node.children && node.children.length > 0) {
     node.children.forEach(child => {
-      createElement(child);
+      
+      // 创建dom节点
+      createElement(child); 
+
+      // 设置节点属性
+      setInitialAttr(child);
+
+      // 为元素绑定事件
       bindEventForVNode(child);
-      if (child.element) {
-        node.element.appendChild(child.element);
-      }
+
+      // 追加元素
+      appendChild(node, child);
+      
       // 组件加载
       lifecycleMounted(child);
 
       if (child.children && child.children.length > 0) {
         createChildren(child);
+      }
+    });
+  }
+}
+
+// 初始化节点时添加attr
+function setInitialAttr(vnode) {
+  if (!(vnode instanceof VComponentNode) && !(vnode instanceof VTextNode)) {
+    const keys = Object.keys(vnode.attr || {});
+    keys.forEach(key => {
+      if (vnode.element) {
+        setAttr(vnode.element, key, vnode.attr[key]);
       }
     });
   }
