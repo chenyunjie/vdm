@@ -1,5 +1,5 @@
 {
-  "name": "rollup-starter-app",
+  "name": "tinyreact",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
@@ -13,10 +13,12 @@
   "dependencies": {
     "date-fns": "^2.16.1"
   },
+  "main": "./lib/tinyreact.js",
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "dev": "npm-run-all --parallel start watch",
-    "start": "serve public"
+    "start": "serve public",
+    "build:lib": "rollup --config rollup.config.lib.js"
   }
 }

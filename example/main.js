@@ -1,4 +1,4 @@
-import Tiny, { Component } from './vdom';
+import Tiny, { Component } from '../lib/tinyreact';
 
 class DisplayHello extends Component {
 
