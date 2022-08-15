@@ -8,6 +8,9 @@ function lifecycleMounted(vnode) {
   if (vnode instanceof VComponentNode) {
     if (vnode.mounted && isFunctionType(vnode.mounted)) {
       vnode.mounted.apply(vnode, []);
+    } else if (vnode.componentDidMount && isFunctionType(vnode.componentDidMount)) {
+      // 兼容react生命周期
+      vnode.componentDidMount.apply(vnode, []);
     }
   }
 }
@@ -19,6 +22,9 @@ function lifecycleUnmounted(vnode) {
   if (vnode instanceof VComponentNode) {
     if (vnode.unmounted && isFunctionType(vnode.unmounted)) {
       vnode.unmounted.apply(vnode, []);
+    } else if (vnode.componentWillUnmount && isFunctionType(componentWillUnmount)) {
+      // 兼容react生命周期
+      vnode.componentWillUnmount.apply(vnode, []);
     }
   }
 }
