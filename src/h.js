@@ -1,6 +1,6 @@
 import { VNormalNode, VTextNode } from './vnode';
 import { Component } from './component';
-import { isArrayType, isFunctionType, isStringType } from './utils';
+import { isArrayType, isFunctionType, isNumberType, isStringType } from './utils';
 let id = 1;
 
 function h(tag, attr, children) {
@@ -28,7 +28,7 @@ function h(tag, attr, children) {
           // 指定节点所属组件
           renderedVNode.holder = newChildNode;
         }
-      } else if (isStringType(child)) {
+      } else if (isStringType(child) || isNumberType(child)) {
         // 字符串类型
         newChildNode = text(child);
       }

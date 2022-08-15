@@ -1,4 +1,3 @@
-import { ta, te } from "date-fns/locale";
 
 const NodeType = {
   Text: 'text',

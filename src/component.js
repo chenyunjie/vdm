@@ -15,6 +15,7 @@ class Component extends VComponentNode {
       props = {};
     }
     
+    // 单项数据
     this.props = JSON.parse(JSON.stringify(props));
   }
 
@@ -23,7 +24,7 @@ class Component extends VComponentNode {
   }
 
   shouldComponentUpdate() {
-
+    return true;
   }
 
   setData(data, complete) {

@@ -75,11 +75,9 @@ class HelloBar extends Component {
 
     const  name = times % 2 == 0 ? '南京' : '世界';
 
-    const expression = '你好,' + name + ',' + times + '秒';
-
     return (
       <span style={times % 2 == 0 ? 'color: #ff4f4f' : 'color: #4386f5'}>
-        { expression }
+        你好,{ name }, {times} 秒
       </span>
     );
   }
