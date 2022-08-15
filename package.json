@@ -1,5 +1,6 @@
 {
-  "name": "tinyreact",
+  "name": "uureact",
+  "version": "0.0.1",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.1.0",
