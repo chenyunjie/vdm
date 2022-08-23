@@ -15,7 +15,7 @@ class Component extends VComponentNode {
       props = {};
     }
     
-    // 单项数据
+    // 单向数据
     this.props = JSON.parse(JSON.stringify(props));
   }
 

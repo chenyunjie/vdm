@@ -6,33 +6,23 @@ class DisplayHello extends Component {
     super(props);
     this.data = {
       items: [],
-      times: 0,
-      unrelated: 0
+      times: 0
     }
   }
 
   mounted() {
-    this.interval = setInterval(() => {
-      let { unrelated, times } = this.data;
-      unrelated++;
-      times++;
-      this.setData({ unrelated, times });
-      if (unrelated > 10) {
-        clearInterval(this.interval);
-      }
-
-    }, 1000);
+    console.log('组件被加载了');
   }
 
   render() {
     const { name, times, items } = this.data;
 
-    const itemList = items.map(item => <div>{item}</div>)
-
     return (
       <div>
         <HelloBar times={times} ref="hello" />
-        {itemList}
+        {
+          items.map(item => <div>{item}</div>)
+        }
         <button catch:tap={this.add.bind(this)} style="position: fixed; left: 200px; top: 20px;">添加</button>
         <button catch:tap={this.delete.bind(this)} style="position: fixed; left: 260px; top: 20px;">删除</button>
       </div>
@@ -87,4 +77,4 @@ class HelloBar extends Component {
   }
 }
 
-Tiny.render(document.body, new DisplayHello({ name: "世界"}))
+Tiny.render(document.body, <DisplayHello name="世界"/>)

@@ -39,3 +39,5 @@ export default Tiny;
 export {
   Component
 }
+
+Object.defineProperty(exports, "__esModule", { value: true });
